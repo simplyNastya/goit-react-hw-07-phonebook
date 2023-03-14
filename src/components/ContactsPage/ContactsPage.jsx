@@ -57,7 +57,3 @@ const ContactsPage = () => {
 };
 
 export default ContactsPage;
-
-// const onFilterChange = event => {
-//   dispatch(setFilter(event.target.value));
-// };
