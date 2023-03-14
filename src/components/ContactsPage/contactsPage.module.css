@@ -1,0 +1,20 @@
+.wrapper {
+    width: 450px;
+    margin: 0 auto;
+    border: 1px solid;
+}
+
+.spiner_box {
+    position: relative;
+}
+
+.spiner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.error {
+    text-align: center;
+}

@@ -1,5 +1,6 @@
-import { useState } from 'react';
-// import PropTypes from 'prop-types';
+import { useState, useRef, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchAddContact } from 'redux/contacts/contacts-operations';
 import styles from './form.module.css';
 
 const INITIAL_VALUE = {
@@ -7,8 +8,19 @@ const INITIAL_VALUE = {
   number: '',
 };
 
-const Form = ({ onSubmit }) => {
+const Form = () => {
   const [value, setValue] = useState({ ...INITIAL_VALUE });
+
+  const focusRef = useRef();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    focusRef.current.focus();
+  }, []);
+
+  const onAddContact = data => {
+    dispatch(fetchAddContact(data));
+  };
 
   const handleInput = ({ currentTarget: { name, value } }) => {
     setValue(prevValue => ({
@@ -20,7 +32,10 @@ const Form = ({ onSubmit }) => {
   const handleSubmit = event => {
     event.preventDefault();
 
-    onSubmit({ ...value });
+    focusRef.current.focus();
+
+    onAddContact(value);
+
     reset();
   };
 
@@ -44,6 +59,7 @@ const Form = ({ onSubmit }) => {
               pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
               title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
               className={styles.input}
+              ref={focusRef}
               required
             />
           </label>
@@ -70,7 +86,3 @@ const Form = ({ onSubmit }) => {
 };
 
 export default Form;
-
-// Form.propTypes = {
-//   onSubmit: PropTypes.func.isRequired,
-// };

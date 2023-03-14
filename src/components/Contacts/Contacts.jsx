@@ -1,11 +1,35 @@
-// import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectContacts } from 'redux/contacts/contacts-selectors';
+import { fetchDeleteContact } from 'redux/contacts/contacts-operations';
+import { selectFilter } from 'redux/filter/filter-selectors';
 import styles from './contacts.module.css';
 
-const Contacts = ({ contacts, onDeleteContact }) => {
+const Contacts = () => {
+  const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectFilter);
+
+  const dispatch = useDispatch();
+
+  const filterSearch = () => {
+    if (!filter) {
+      return contacts;
+    }
+    const newContact = contacts.filter(item =>
+      item.name.toLowerCase().includes(filter.toLowerCase())
+    );
+    return newContact;
+  };
+
+  const filtredContacts = filterSearch();
+
+  const onDeleteContact = id => {
+    dispatch(fetchDeleteContact(id));
+  };
+
   return (
     <div>
       <ul className={styles.list}>
-        {contacts.map(contact => {
+        {filtredContacts.map(contact => {
           return (
             <li className={styles.item} key={contact.id}>
               <p className={styles.itemName}>
@@ -27,8 +51,3 @@ const Contacts = ({ contacts, onDeleteContact }) => {
 };
 
 export default Contacts;
-
-// Contacts.propTypes = {
-//   filteredContacts: PropTypes.func.isRequired,
-//   deleteItem: PropTypes.func.isRequired,
-// };

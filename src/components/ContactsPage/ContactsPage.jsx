@@ -1,57 +1,63 @@
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Form from 'components/Form/Form';
 import Contacts from 'components/Contacts/Contacts';
 import Filter from 'components/Filter/Filter';
 
-import { getContacts } from 'redux/contacts/contacts-selectors';
-import { getFilter, getFilteredContacts } from 'redux/filter/filter-selectors';
-import { addContact, deleteContact } from 'redux/contacts/contacts-slice';
-import { setFilter } from 'redux/filter/filter-slice';
+import {
+  selectContacts,
+  selectIsLoading,
+  selectError,
+} from 'redux/contacts/contacts-selectors';
+import { fetchContacts } from 'redux/contacts/contacts-operations';
+import { Blocks } from 'react-loader-spinner';
+import styles from './contactsPage.module.css';
 
 const ContactsPage = () => {
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
-  const filteredContacts = useSelector(getFilteredContacts);
+  const contacts = useSelector(selectContacts);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
 
   const dispatch = useDispatch();
 
-  const isDublicate = (name, number) => {
-    const normalizedName = name.toLowerCase();
-    const dublicate = contacts.find(item => {
-      return (
-        item.name.toLowerCase() === normalizedName &&
-        item.number.toLowerCase() === number
-      );
-    });
-
-    return Boolean(dublicate);
-  };
-
-  const onAddContact = ({ name, number }) => {
-    if (isDublicate(name, number)) {
-      alert(`${name} ${number} is already exist`);
-      return;
-    }
-    dispatch(addContact({ name, number }));
-  };
-
-  const onDeleteContact = id => {
-    dispatch(deleteContact(id));
-  };
-
-  const onFilterChange = event => {
-    dispatch(setFilter(event.target.value));
-  };
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <>
-      <h1 style={{ padding: 20 }}>Phonebook</h1>
-      <Form onSubmit={onAddContact} />
-      <h2 style={{ padding: 20 }}>Contacts</h2>
-      <Filter filter={filter} onChange={onFilterChange} />
-      <Contacts contacts={filteredContacts} onDeleteContact={onDeleteContact} />
+      {error ? (
+        <p className={styles.error}>Something went wrong. Try again later.</p>
+      ) : (
+        <div className={styles.wrapper}>
+          <h1 style={{ padding: 20 }}>Phonebook</h1>
+          <Form />
+
+          <div className={styles.spiner_box}>
+            <h2 style={{ padding: 20 }}>Contacts</h2>
+            {isLoading && (
+              <div className={styles.spiner}>
+                <Blocks
+                  visible={true}
+                  height="80"
+                  width="80"
+                  ariaLabel="blocks-loading"
+                  wrapperStyle={{}}
+                  wrapperClass="blocks-wrapper"
+                />
+              </div>
+            )}
+          </div>
+          <Filter />
+          {contacts.length !== 0 && <Contacts />}
+        </div>
+      )}
     </>
   );
 };
 
 export default ContactsPage;
+
+// const onFilterChange = event => {
+//   dispatch(setFilter(event.target.value));
+// };

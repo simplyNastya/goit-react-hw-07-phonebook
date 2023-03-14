@@ -1,7 +1,17 @@
-// import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectFilter } from 'redux/filter/filter-selectors';
+import { addFilter } from 'redux/filter/filter-slice';
 import styles from './filter.module.css';
 
-const Filter = ({ filter, onChange }) => {
+const Filter = () => {
+  const filter = useSelector(selectFilter);
+  const dispatch = useDispatch();
+
+  const onFilter = e => {
+    const { value } = e.target;
+    dispatch(addFilter(value));
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.inputGroup}>
@@ -10,8 +20,8 @@ const Filter = ({ filter, onChange }) => {
           type="text"
           value={filter}
           name="filter"
-          onChange={onChange}
           className={styles.input}
+          onChange={onFilter}
         />
       </div>
     </div>
@@ -19,8 +29,3 @@ const Filter = ({ filter, onChange }) => {
 };
 
 export default Filter;
-
-// Filter.propTypes = {
-//   filter: PropTypes.string.isRequired,
-//   filterItem: PropTypes.func.isRequired,
-// };
