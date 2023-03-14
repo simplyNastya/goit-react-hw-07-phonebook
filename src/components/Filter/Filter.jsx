@@ -9,6 +9,8 @@ const Filter = () => {
 
   const onFilter = e => {
     const { value } = e.target;
+    console.log(value);
+    console.log(dispatch);
     dispatch(addFilter(value));
   };
 
